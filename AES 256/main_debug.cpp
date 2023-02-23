@@ -89,6 +89,7 @@ void printKey(int _round);
 //file io
 int string_to_byte(char first, char second);
 bool valid_path(char in);
+void padding(int start);
 
 // ./main
 // {-e/-d} -k <key> -f <file>
@@ -186,6 +187,7 @@ int main() {
     for(int i=0;i<file_size;i+=BLOCK_SIZE){
         // state: current block
         file.read((char*)&state, sizeof(state));
+        if(i+BLOCK_SIZE>file_size) padding(file_size-i);
         //start encrypt or decrypt : will output to the other file
         if(encr) encrypt();
         else decrypt();
@@ -385,6 +387,10 @@ bool valid_path(char in){
         return true;
     }
     return false;
+}
+
+void padding(int start){
+    for(int i=start;i<BLOCK_SIZE;i++)state[i] = BLOCK_SIZE - start;
 }
 
 void printState(){

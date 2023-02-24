@@ -3,7 +3,7 @@ This tool is written for AES-256 cipher.
 ## main : AES-256 cipher
 Users should first execute it ,and then give the following command:
 
-`{-e|-d} -k <key> -f <input file> -o <output file> [-m <mode>]`
+`{-e|-d} -k <key> -f <input file> -o <output file>`
 
 ### input options
 	-e

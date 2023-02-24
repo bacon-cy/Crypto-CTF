@@ -24,9 +24,11 @@ int string_to_byte(char first, char second){
 
 int main(){
     string input;
+    string path;
+    cin>>input;
+    cin>>path;
     ofstream file;
-    file.open("input.txt",std::ios::binary);
-    cin >>input;
+    file.open(path,std::ios::binary);
     int len = input.length();
     unsigned char output[len/2];
     for(int i=0;i<len-1;i+=2){

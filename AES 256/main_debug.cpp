@@ -90,6 +90,7 @@ void printKey(int _round);
 int string_to_byte(char first, char second);
 bool valid_path(char in);
 void padding(int start);
+int unpadding();
 
 // ./main
 // {-e/-d} -k <key> -f <file>
@@ -183,16 +184,25 @@ int main() {
     unsigned long long file_size = file.tellg(); // size in bytes
     file.seekg(0,ios::beg);
     cout<<file_size;
-    //turn the input file into blocks
+
+    if(!encr && file_size%BLOCK_SIZE){
+        cerr<<"ERROR: The input file for decreption must be a multiple of 16 bytes.\n";
+        exit(0);
+    }
+
     for(int i=0;i<file_size;i+=BLOCK_SIZE){
-        // state: current block
         file.read((char*)&state, sizeof(state));
         if(i+BLOCK_SIZE>file_size) padding(file_size-i);
-        //start encrypt or decrypt : will output to the other file
-        if(encr) encrypt();
-        else decrypt();
-        //output
-        output.write((char*)&state, sizeof(state));
+        
+        int unpad = 0;
+        if(encr)
+            encrypt();
+        else{
+            decrypt();
+            if(i+BLOCK_SIZE>=file_size) unpad = unpadding();
+        }
+        cout<<unpad<<endl;
+        output.write((char*)&state, sizeof(state)-unpad);
     }
 
 
@@ -391,6 +401,15 @@ bool valid_path(char in){
 
 void padding(int start){
     for(int i=start;i<BLOCK_SIZE;i++)state[i] = BLOCK_SIZE - start;
+}
+
+int unpadding(){
+    byte pad = state[15];
+    if(pad > 15) return 0;
+    for(int i=0;i<pad;i++){
+        if(state[15-i]!=pad) return 0;
+    }
+    return pad;
 }
 
 void printState(){
